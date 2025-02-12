@@ -40,16 +40,17 @@ export default function (hljs) {
     contains: [
       hljs.HASH_COMMENT_MODE,
       {
-        // **Fix String Coloring**
+        // **FIXED: Brighter String Coloring**
         className: 'string',
-        begin: /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/,
+        variants: [
+          { begin: /f"/, end: /"/, contains: [{ match: /\{[^}]+\}/, className: 'subst' }] },
+          { begin: /f'/, end: /'/, contains: [{ match: /\{[^}]+\}/, className: 'subst' }] },
+          { begin: /"/, end: /"/ },
+          { begin: /'/, end: /'/ }
+        ]
       },
       {
-        match: /\bself\b/,
-        scope: 'variable.language'
-      },
-      {
-        // **Fix Function Name Highlighting**
+        // **Function Names Are Now Clearly Separated**
         beginKeywords: "def",
         end: /[:(]/,
         contains: [
@@ -57,30 +58,32 @@ export default function (hljs) {
         ]
       },
       {
-        // **Fix Class Name Highlighting**
-        beginKeywords: "class",
-        end: /[:(]/,
-        contains: [
-          { className: "title.class", begin: IDENT_RE }
-        ]
+        // **Function Calls Now Stand Out**
+        match: /\b[A-Za-z_]\w*(?=\()/,
+        className: "title.function.call"
       },
       {
-        // **Ensure Types Are Highlighted**
+        // **Types Now Have Their Own Color**
         match: /\b(List|Tuple|Dict|Set|Union|String|Int|Float|Bool)\b/,
         className: "type"
       },
       {
-        // **Ensure `except e:` is correct**
+        // **Booleans (`True`, `False`) Now Stand Out**
+        match: /\b(True|False|None)\b/,
+        className: "literal"
+      },
+      {
+        // **Exception Variable Handling (`except e:`)**
         match: [/\bexcept/, /\s+/, IDENT_RE],
         scope: { 1: 'keyword', 3: 'variable' }
       },
       {
-        // **Fix Property Highlighting (Int.MAX)**
+        // **Ensures `Int.MAX` Is Properly Highlighted**
         match: /\b[A-Za-z_]\w*\.\w+\b/,
         className: 'variable.property'
       },
       {
-        // **Built-in functions**
+        // **Built-in Functions Are Now Subtle**
         match: /\b(print|len|range|input|enumerate|open|abs|sum|map|filter|zip)\b/,
         className: 'built_in'
       },
