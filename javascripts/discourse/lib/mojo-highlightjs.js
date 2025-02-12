@@ -45,47 +45,55 @@ export default function (hljs) {
         scope: 'variable.language'
       },
       {
-        // Stronger function name highlighting
+        // **Fix Function Highlighting**
         beginKeywords: "def",
-        end: /:/,
+        end: /[:(]/,
         contains: [
           { className: "title.function", begin: IDENT_RE }
         ]
       },
       {
-        // Stronger class name highlighting
+        // **Fix Class Highlighting**
         beginKeywords: "class",
-        end: /:/,
+        end: /[:(]/,
         contains: [
           { className: "title.class", begin: IDENT_RE }
         ]
       },
       {
-        // Ensuring `except e:` doesn't color `e` like a function
+        // **Fix 'except e:' variable coloring**
         match: [/\bexcept/, /\s+/, IDENT_RE],
         scope: { 1: 'keyword', 3: 'variable' }
       },
       {
-        // Force highlighting of List[], Tuple[], Dict[] explicitly
+        // **Force strong highlighting for List[], Tuple[], Dict[]**
         match: /\b(List|Tuple|Dict|Set|Union)\[[^\]]+\]/,
         scope: 'type'
       },
       {
-        // Force strong property access highlighting for `Int.MAX`
+        // **Improve property highlighting for Int.MAX**
         match: /\b[A-Za-z_]\w*\.\w+\b/,
         scope: 'variable.property'
       },
       {
-        // Built-in functions (ensures 'print' and others aren't overly colored)
+        // **Tweak built-in function styling**
         match: /\b(print|len|range|input|enumerate|open|abs|sum|map|filter|zip)\b/,
         scope: 'built_in'
       },
       {
-        // Enforce formatted string `{}` placeholders properly
+        // **Fix formatted string `{}` placeholders**
         className: 'string',
         variants: [
-          { begin: /f"/, end: /"/, contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, className: 'subst' }] },
-          { begin: /f'/, end: /'/, contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, className: 'subst' }] },
+          { 
+            begin: /f"/, 
+            end: /"/, 
+            contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, className: 'subst' }] 
+          },
+          { 
+            begin: /f'/, 
+            end: /'/, 
+            contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, className: 'subst' }] 
+          },
           hljs.QUOTE_STRING_MODE
         ]
       },
