@@ -40,7 +40,6 @@ export default function (hljs) {
     contains: [
       hljs.HASH_COMMENT_MODE,
       {
-        // **FIXED: Brighter String Coloring**
         className: 'string',
         variants: [
           { begin: /f"/, end: /"/, contains: [{ match: /\{[^}]+\}/, className: 'subst' }] },
@@ -50,7 +49,10 @@ export default function (hljs) {
         ]
       },
       {
-        // **Function Names Are Now Clearly Separated**
+        match: /\b(List|Tuple|Dict|Set|Union|String|Int|Float|Bool)\b/,
+        className: "type"
+      },
+      {
         beginKeywords: "def",
         end: /[:(]/,
         contains: [
@@ -58,32 +60,22 @@ export default function (hljs) {
         ]
       },
       {
-        // **Function Calls Now Stand Out**
         match: /\b[A-Za-z_]\w*(?=\()/,
         className: "title.function.call"
       },
       {
-        // **Types Now Have Their Own Color**
-        match: /\b(List|Tuple|Dict|Set|Union|String|Int|Float|Bool)\b/,
-        className: "type"
-      },
-      {
-        // **Booleans (`True`, `False`) Now Stand Out**
         match: /\b(True|False|None)\b/,
         className: "literal"
       },
       {
-        // **Exception Variable Handling (`except e:`)**
         match: [/\bexcept/, /\s+/, IDENT_RE],
         scope: { 1: 'keyword', 3: 'variable' }
       },
       {
-        // **Ensures `Int.MAX` Is Properly Highlighted**
         match: /\b[A-Za-z_]\w*\.\w+\b/,
         className: 'variable.property'
       },
       {
-        // **Built-in Functions Are Now Subtle**
         match: /\b(print|len|range|input|enumerate|open|abs|sum|map|filter|zip)\b/,
         className: 'built_in'
       },
