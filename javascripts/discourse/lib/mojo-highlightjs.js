@@ -46,7 +46,7 @@ export default function (hljs) {
       },
       {
         match: [/\bdef/, /\s+/, IDENT_RE],
-        scope: { 1: 'keyword', 3: 'title.function' } // **Ensures function names stand out**
+        scope: { 1: 'keyword', 3: 'title.function' } // **Stronger function highlighting**
       },
       {
         match: [/\bclass/, /\s+/, IDENT_RE],
@@ -70,13 +70,21 @@ export default function (hljs) {
       },
       {
         match: /\b(print|len|range|input|enumerate|open|abs|sum|map|filter|zip)\b/,
-        scope: 'built_in' // **Ensures built-in functions are highlighted properly**
+        scope: 'built_in' // **Fixes built-in function over-coloring**
       },
       {
         className: 'string',
         variants: [
-          { begin: /f"/, end: /"/, contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, scope: 'subst' }] },
-          { begin: /f'/, end: /'/, contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, scope: 'subst' }] },
+          { 
+            begin: /f"/, 
+            end: /"/, 
+            contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, scope: 'subst' }] 
+          },
+          { 
+            begin: /f'/, 
+            end: /'/, 
+            contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, scope: 'subst' }] 
+          },
           hljs.QUOTE_STRING_MODE
         ]
       },
