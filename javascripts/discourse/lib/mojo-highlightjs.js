@@ -40,16 +40,16 @@ export default function (hljs) {
     contains: [
       hljs.HASH_COMMENT_MODE,
       {
-        // **Fix: Restrict String Highlighting to ONLY Actual Strings**
+        // **Fix String Coloring**
         className: 'string',
-        begin: /(?<!\w)("|')(?:\\.|(?!\1)[^\\\n])*\1(?!\w)/,
-        contains: [{ match: /\{[^}]+\}/, className: 'subst' }]
+        begin: /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/,
       },
       {
         match: /\bself\b/,
         scope: 'variable.language'
       },
       {
+        // **Fix Function Name Highlighting**
         beginKeywords: "def",
         end: /[:(]/,
         contains: [
@@ -57,6 +57,7 @@ export default function (hljs) {
         ]
       },
       {
+        // **Fix Class Name Highlighting**
         beginKeywords: "class",
         end: /[:(]/,
         contains: [
@@ -64,20 +65,24 @@ export default function (hljs) {
         ]
       },
       {
+        // **Ensure Types Are Highlighted**
+        match: /\b(List|Tuple|Dict|Set|Union|String|Int|Float|Bool)\b/,
+        className: "type"
+      },
+      {
+        // **Ensure `except e:` is correct**
         match: [/\bexcept/, /\s+/, IDENT_RE],
         scope: { 1: 'keyword', 3: 'variable' }
       },
       {
-        match: /\b(List|Tuple|Dict|Set|Union)\[[^\]]+\]/,
-        scope: 'type'
-      },
-      {
+        // **Fix Property Highlighting (Int.MAX)**
         match: /\b[A-Za-z_]\w*\.\w+\b/,
-        scope: 'variable.property'
+        className: 'variable.property'
       },
       {
+        // **Built-in functions**
         match: /\b(print|len|range|input|enumerate|open|abs|sum|map|filter|zip)\b/,
-        scope: 'built_in'
+        className: 'built_in'
       },
       {
         className: 'meta',
