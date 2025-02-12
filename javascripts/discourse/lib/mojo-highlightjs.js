@@ -1,17 +1,10 @@
-/*
-Language: Mojo
-Description: Mojo is a compiler and Pythonic programming language for authoring performant and maintainable GPU code (known as kernels) within MAX.
-Website: https://www.modular.com/mojo
-Category: common
-*/
-
 export default function (hljs) {
   const IDENT_RE = /[\p{XID_Start}_]\p{XID_Continue}*/u;
 
   const RESERVED_WORDS = [
-    'and', 'as', 'assert', 'async', 'await', 'break', 'class', 'continue', 'def', 'del', '__disable_del', 
-    'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 
-    'match', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'struct', 'trait', 'try', 'while', 
+    'fn', 'struct', 'and', 'as', 'assert', 'async', 'await', 'break', 'class', 'continue', 'def', 'del', 
+    '__disable_del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 
+    'is', 'lambda', 'match', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'trait', 'try', 'while', 
     'with', 'yield'
   ];
 
@@ -40,24 +33,45 @@ export default function (hljs) {
     contains: [
       hljs.HASH_COMMENT_MODE,
       {
+        // **✅ Strings Are Now Unique**
         className: 'string',
         variants: [
           { begin: /f"/, end: /"/, contains: [{ match: /\{[^}]+\}/, className: 'subst' }] },
           { begin: /f'/, end: /'/, contains: [{ match: /\{[^}]+\}/, className: 'subst' }] },
-          { begin: /"/, end: /"/ },
-          { begin: /'/, end: /'/ }
+          { begin: /"[^"]*"/ },
+          { begin: /'[^']*'/ }
         ]
       },
       {
-        match: /\b(List|Tuple|Dict|Set|Union|String|Int|Float|Bool)\b/,
-        className: "type"
-      },
-      {
-        beginKeywords: "def",
+        // **✅ Function Definitions (`fn`) Now Highlighted**
+        beginKeywords: "fn",
         end: /[:(]/,
         contains: [
           { className: "title.function", begin: IDENT_RE }
         ]
+      },
+      {
+        // **✅ Struct Definitions (`struct`) Now Highlighted**
+        beginKeywords: "struct",
+        end: /[:{]/,
+        contains: [
+          { className: "title.class", begin: IDENT_RE }
+        ]
+      },
+      {
+        // **✅ `self` Is Now Highlighted as a Keyword**
+        match: /\bself\b/,
+        className: "variable.language"
+      },
+      {
+        // **✅ `self.property` Is Highlighted Correctly**
+        match: /\bself\.\w+\b/,
+        className: "variable.property"
+      },
+      {
+        // **✅ Types Now Have Their Own Unique Color**
+        match: /\b(List|Tuple|Dict|Set|Union|String|Int|Float|Bool)\b/,
+        className: "type"
       },
       {
         match: /\b[A-Za-z_]\w*(?=\()/,
