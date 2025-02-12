@@ -45,46 +45,47 @@ export default function (hljs) {
         scope: 'variable.language'
       },
       {
-        match: [/\bdef/, /\s+/, IDENT_RE],
-        scope: { 1: 'keyword', 3: 'title.function' } // **Strongest function name highlight**
+        // Stronger function name highlighting
+        beginKeywords: "def",
+        end: /:/,
+        contains: [
+          { className: "title.function", begin: IDENT_RE }
+        ]
       },
       {
-        match: [/\bclass/, /\s+/, IDENT_RE],
-        scope: { 1: 'keyword', 3: 'title.class' }
+        // Stronger class name highlighting
+        beginKeywords: "class",
+        end: /:/,
+        contains: [
+          { className: "title.class", begin: IDENT_RE }
+        ]
       },
       {
+        // Ensuring `except e:` doesn't color `e` like a function
         match: [/\bexcept/, /\s+/, IDENT_RE],
-        scope: { 1: 'keyword', 3: 'variable' } // Fixes `except e`
+        scope: { 1: 'keyword', 3: 'variable' }
       },
       {
-        match: /\bList\[[^\]]+\]|\bTuple\[[^\]]+\]|\bDict\[[^\]]+\]/,
-        scope: 'type' // **Ensures types like `List[Int]` are distinct**
+        // Force highlighting of List[], Tuple[], Dict[] explicitly
+        match: /\b(List|Tuple|Dict|Set|Union)\[[^\]]+\]/,
+        scope: 'type'
       },
       {
-        match: /->\s*[A-Za-z_]\w*/,
-        scope: 'type' // **Highlights return type annotations**
-      },
-      {
+        // Force strong property access highlighting for `Int.MAX`
         match: /\b[A-Za-z_]\w*\.\w+\b/,
-        scope: 'variable.property' // Fixes `Int.MAX`
+        scope: 'variable.property'
       },
       {
+        // Built-in functions (ensures 'print' and others aren't overly colored)
         match: /\b(print|len|range|input|enumerate|open|abs|sum|map|filter|zip)\b/,
-        scope: 'built_in' // **Fixes built-in function over-coloring**
+        scope: 'built_in'
       },
       {
+        // Enforce formatted string `{}` placeholders properly
         className: 'string',
         variants: [
-          { 
-            begin: /f"/, 
-            end: /"/, 
-            contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, scope: 'subst' }] 
-          },
-          { 
-            begin: /f'/, 
-            end: /'/, 
-            contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, scope: 'subst' }] 
-          },
+          { begin: /f"/, end: /"/, contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, className: 'subst' }] },
+          { begin: /f'/, end: /'/, contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, className: 'subst' }] },
           hljs.QUOTE_STRING_MODE
         ]
       },
