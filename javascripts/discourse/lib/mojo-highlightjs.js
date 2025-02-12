@@ -46,7 +46,7 @@ export default function (hljs) {
       },
       {
         match: [/\bdef/, /\s+/, IDENT_RE],
-        scope: { 1: 'keyword', 3: 'title.function' } // **Stronger function highlighting**
+        scope: { 1: 'keyword', 3: 'title.function' } // **Strongest function name highlight**
       },
       {
         match: [/\bclass/, /\s+/, IDENT_RE],
