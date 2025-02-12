@@ -6,7 +6,6 @@ Category: common
 */
 
 export default function (hljs) {
-  const regex = hljs.regex;
   const IDENT_RE = /[\p{XID_Start}_]\p{XID_Continue}*/u;
 
   const RESERVED_WORDS = [
@@ -47,7 +46,7 @@ export default function (hljs) {
       },
       {
         match: [/\bdef/, /\s+/, IDENT_RE],
-        scope: { 1: 'keyword', 3: 'title.function' }
+        scope: { 1: 'keyword', 3: 'title.function' } // **Ensures function names stand out**
       },
       {
         match: [/\bclass/, /\s+/, IDENT_RE],
@@ -59,15 +58,19 @@ export default function (hljs) {
       },
       {
         match: /\bList\[[^\]]+\]|\bTuple\[[^\]]+\]|\bDict\[[^\]]+\]/,
-        scope: 'type'
+        scope: 'type' // **Ensures types like `List[Int]` are distinct**
       },
       {
         match: /->\s*[A-Za-z_]\w*/,
-        scope: 'type'
+        scope: 'type' // **Highlights return type annotations**
       },
       {
         match: /\b[A-Za-z_]\w*\.\w+\b/,
         scope: 'variable.property' // Fixes `Int.MAX`
+      },
+      {
+        match: /\b(print|len|range|input|enumerate|open|abs|sum|map|filter|zip)\b/,
+        scope: 'built_in' // **Ensures built-in functions are highlighted properly**
       },
       {
         className: 'string',
