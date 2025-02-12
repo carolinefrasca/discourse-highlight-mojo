@@ -17,8 +17,8 @@ export default function (hljs) {
   ];
 
   const BUILT_INS = [
-    'print', 'len', 'range', 'int', 'float', 'str', 'bool', 'dict', 'list', 'tuple', 'set', 'sum', 'min', 'max', 'abs',
-    'any', 'all', 'map', 'filter', 'zip', 'enumerate', 'open', 'input', 'super'
+    'print', 'len', 'range', 'int', 'float', 'str', 'bool', 'dict', 'list', 'tuple', 'set', 'sum', 'min', 
+    'max', 'abs', 'any', 'all', 'map', 'filter', 'zip', 'enumerate', 'open', 'input', 'super'
   ];
 
   const LITERALS = ['__debug__', 'Ellipsis', 'False', 'None', 'NotImplemented', 'True'];
@@ -55,7 +55,7 @@ export default function (hljs) {
       },
       {
         match: [/\bexcept/, /\s+/, IDENT_RE],
-        scope: { 1: 'keyword', 3: 'title.exception' }
+        scope: { 1: 'keyword', 3: 'variable' } // Fixes `except e`
       },
       {
         match: /\bList\[[^\]]+\]|\bTuple\[[^\]]+\]|\bDict\[[^\]]+\]/,
@@ -66,10 +66,14 @@ export default function (hljs) {
         scope: 'type'
       },
       {
+        match: /\b[A-Za-z_]\w*\.\w+\b/,
+        scope: 'variable.property' // Fixes `Int.MAX`
+      },
+      {
         className: 'string',
         variants: [
-          { begin: /f"/, end: /"/, contains: [hljs.BACKSLASH_ESCAPE] },
-          { begin: /f'/, end: /'/, contains: [hljs.BACKSLASH_ESCAPE] },
+          { begin: /f"/, end: /"/, contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, scope: 'subst' }] },
+          { begin: /f'/, end: /'/, contains: [hljs.BACKSLASH_ESCAPE, { match: /\{[^}]+\}/, scope: 'subst' }] },
           hljs.QUOTE_STRING_MODE
         ]
       },
