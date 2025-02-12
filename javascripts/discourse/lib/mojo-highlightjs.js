@@ -40,14 +40,10 @@ export default function (hljs) {
     contains: [
       hljs.HASH_COMMENT_MODE,
       {
-        // **Force Stronger String Highlighting**
+        // **Fix: Restrict String Highlighting to ONLY Actual Strings**
         className: 'string',
-        variants: [
-          { begin: /f"/, end: /"/, contains: [{ match: /\{[^}]+\}/, className: 'subst' }] },
-          { begin: /f'/, end: /'/, contains: [{ match: /\{[^}]+\}/, className: 'subst' }] },
-          { begin: /"/, end: /"/ },
-          { begin: /'/, end: /'/ }
-        ]
+        begin: /(?<!\w)("|')(?:\\.|(?!\1)[^\\\n])*\1(?!\w)/,
+        contains: [{ match: /\{[^}]+\}/, className: 'subst' }]
       },
       {
         match: /\bself\b/,
