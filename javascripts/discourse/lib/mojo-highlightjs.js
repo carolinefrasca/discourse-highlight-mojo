@@ -1,26 +1,32 @@
 /*
 Language: Mojo
-Description: Mojo is a compiler and Pythonic programming language for authoring performant and maintainable GPU code (known as kernels) within MAX.  
+Description: Mojo is a compiler and Pythonic programming language for authoring performant and maintainable GPU code (known as kernels) within MAX.
 Website: https://www.modular.com/mojo
 Category: common
 */
 
-export default function(hljs) {
+export default function (hljs) {
   const regex = hljs.regex;
   const IDENT_RE = /[\p{XID_Start}_]\p{XID_Continue}*/u;
+
   const RESERVED_WORDS = [
-    'and', 'as', 'assert', 'async', 'await', 'break', 'class', 'continue', 'def', 'del', '__disable_del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'match', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'struct', 'trait', 'try', 'while', 'with', 'yield'
+    'and', 'as', 'assert', 'async', 'await', 'break', 'class', 'continue', 'def', 'del', '__disable_del', 
+    'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 
+    'match', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'struct', 'trait', 'try', 'while', 
+    'with', 'yield'
   ];
 
   const BUILT_INS = [
-    'always_inline', 'and', 'as', 'bool', 'bytearray', 'bytes', 'break', 'case', 'capturing', 'classmethod', 'complex', 'continue', 'dict', 'div', 'elif', 'else', 'escaping', 'except', 'export', 'finally', 'float', 'for', 'from', 'frozenset', 'func', 'if', 'import', 'in', 'include', 'int', 'interface', 'is', 'isnot', 'iterator', 'let', 'list', 'method', 'mixin', '__mlir_attr', '__mlir_op', '__mlir_type', 'mod', 'not', 'object', 'of', 'or', 'out', 'parameter', 'property', 'ptr', 'raise', 'ref', 'return', 'set', 'SIMD', 'slice', 'staticmethod', 'str', 'throws', 'try', 'tuple', 'type', 'var', 'when', 'while', 'xor', 'yield'
+    'print', 'len', 'range', 'int', 'float', 'str', 'bool', 'dict', 'list', 'tuple', 'set', 'sum', 'min', 'max', 'abs',
+    'any', 'all', 'map', 'filter', 'zip', 'enumerate', 'open', 'input', 'super'
   ];
 
   const LITERALS = ['__debug__', 'Ellipsis', 'False', 'None', 'NotImplemented', 'True'];
-  const TYPES = ['Any', 'Callable', 'Dict', 'List', 'Sequence', 'Set', 'Tuple', 'Type', 'Union'];
+
+  const TYPES = ['Any', 'Callable', 'Dict', 'List', 'Sequence', 'Set', 'Tuple', 'Type', 'Union', 'Int', 'Float', 'Bool', 'String'];
 
   const KEYWORDS = {
-    $pattern: /[A-Za-z]\w+|__\w+__/,
+    $pattern: /[A-Za-z_]\w*/,
     keyword: RESERVED_WORDS,
     built_in: BUILT_INS,
     literal: LITERALS,
@@ -40,16 +46,32 @@ export default function(hljs) {
         scope: 'variable.language'
       },
       {
-        match: [ /\bdef/, /\s+/, IDENT_RE ],
-        scope: { 1: 'keyword', 3: 'title.function' },
-        contains: []
+        match: [/\bdef/, /\s+/, IDENT_RE],
+        scope: { 1: 'keyword', 3: 'title.function' }
       },
       {
+        match: [/\bclass/, /\s+/, IDENT_RE],
+        scope: { 1: 'keyword', 3: 'title.class' }
+      },
+      {
+        match: [/\bexcept/, /\s+/, IDENT_RE],
+        scope: { 1: 'keyword', 3: 'title.exception' }
+      },
+      {
+        match: /\bList\[[^\]]+\]|\bTuple\[[^\]]+\]|\bDict\[[^\]]+\]/,
+        scope: 'type'
+      },
+      {
+        match: /->\s*[A-Za-z_]\w*/,
+        scope: 'type'
+      },
+      {
+        className: 'string',
         variants: [
-          { match: [ /\bclass/, /\s+/, IDENT_RE, /\s*/, /\(\s*/, IDENT_RE, /\s*\)/ ] },
-          { match: [ /\bclass/, /\s+/, IDENT_RE ] }
-        ],
-        scope: { 1: 'keyword', 3: 'title.class', 6: 'title.class.inherited' }
+          { begin: /f"/, end: /"/, contains: [hljs.BACKSLASH_ESCAPE] },
+          { begin: /f'/, end: /'/, contains: [hljs.BACKSLASH_ESCAPE] },
+          hljs.QUOTE_STRING_MODE
+        ]
       },
       {
         className: 'meta',
